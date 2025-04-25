@@ -43,6 +43,7 @@ jobs:
           script: |
             set -e
             cd ~/challenge
+            git pull
             docker-compose down
             docker system prune -af
             docker-compose up -d --build

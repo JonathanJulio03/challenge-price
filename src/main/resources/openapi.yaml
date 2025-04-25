@@ -9,11 +9,11 @@ info:
     email: jonjulio03@gmail.com
   version: 1.0.0
 servers:
-  - url: http://localhost:8080
+  - url: https://challenge-test.online
     description: Development environment
-  - url: http://localhost:8080
+  - url: https://challenge-test.online
     description: Testing environment
-  - url: http://localhost:8080
+  - url: https://challenge-test.online
     description: Production environment
 tags:
   - name: Ecommerce Prices
