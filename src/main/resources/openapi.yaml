@@ -1,0 +1,122 @@
+openapi: 3.0.0
+info:
+  title: API - Ecommerce Prices - V1
+  description: |
+    <sup>(ES)</sup> Esta API de comercio electrónico de precios<br><br>
+    <sup>(EN)</sup> This API manages the ecommerce prices<br><br><br>
+  contact:
+    name: Gobierno de API - Servicios - Jonathan Julio
+    email: jonjulio03@gmail.com
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+    description: Development environment
+  - url: http://localhost:8080
+    description: Testing environment
+  - url: http://localhost:8080
+    description: Production environment
+tags:
+  - name: Ecommerce Prices
+    description: Ecommerce Prices Controller
+paths:
+  /price:
+    get:
+      tags:
+        - Ecommerce Prices
+      summary: "⁽ᴱˢ⁾ Obtener el precio a aplicar. \n⁽ᴱᴺ⁾ Get the price to apply."
+      description: |
+        ### ⁽ᴱˢ⁾ Descripción
+        Devuelve el precio que aplica según la fecha, producto y marca.
+
+        ### ⁽ᴱᴺ⁾ Description
+        Returns the applicable price based on date, product and brand.
+      operationId: getPriceApply
+      parameters:
+        - name: date
+          in: query
+          description: "⁽ᴱˢ⁾ Fecha de aplicación del precio (Formato ISO 8601).  \n⁽ᴱᴺ⁾ Price application date (ISO 8601 format).\n"
+          required: true
+          schema:
+            type: string
+            format: date-time
+        - name: productId
+          in: query
+          description: "⁽ᴱˢ⁾ ID del producto.  \n⁽ᴱᴺ⁾ Product ID.\n"
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 35455
+        - name: brandId
+          in: query
+          description: "⁽ᴱˢ⁾ ID de la marca.  \n⁽ᴱᴺ⁾ Brand ID.\n"
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 1
+      responses:
+        "200":
+          description: "⁽ᴱˢ⁾ Precio encontrado.  \n⁽ᴱᴺ⁾ Price found.\n"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PriceDto'
+              examples:
+                SuccessResponse:
+                  summary: Ejemplo de respuesta exitosa
+                  value:
+                    productId: 35455
+                    brandId: 1
+                    priceList: 1
+                    startDate: 2020-06-14T00:00:00
+                    endDate: 2020-12-31T23:59:59
+                    price: 35.5
+                    curr: EUR
+        "400":
+          description: "⁽ᴱˢ⁾ Solicitud incorrecta.  \n⁽ᴱᴺ⁾ Bad request.\n"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                BadRequestResponse:
+                  summary: Error de validación
+                  value:
+                    code: "400"
+                    message: Invalid date format. Expected ISO 8601.
+components:
+  schemas:
+    PriceDto:
+      type: object
+      properties:
+        productId:
+          type: integer
+          format: int64
+          example: 35455
+        brandId:
+          type: integer
+          format: int64
+          example: 1
+        priceList:
+          type: integer
+          example: 1
+        startDate:
+          type: string
+          format: date-time
+        endDate:
+          type: string
+          format: date-time
+        price:
+          type: number
+          format: float
+          example: 35.5
+    ErrorResponse:
+      type: object
+      properties:
+        code:
+          type: string
+          example: "400"
+        message:
+          type: string
+          example: Invalid request parameters.
