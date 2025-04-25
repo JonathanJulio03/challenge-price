@@ -1,12 +1,17 @@
 package com.challenge.price.application.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.challenge.price.application.output.PricePort;
 import com.challenge.price.application.service.mapper.PriceMapper;
+import com.challenge.price.domain.strategy.PriceStrategy;
+import com.challenge.price.domain.strategy.PriceStrategyFactory;
 import com.challenge.price.commons.exception.BusinessException;
 import com.challenge.price.domain.PriceModel;
 import com.challenge.price.server.models.PriceDto;
@@ -44,6 +49,12 @@ class PriceServiceTest {
   @Mock
   private PricePort pricePort;
 
+  @Mock
+  private PriceStrategyFactory priceStrategyFactory;
+
+  @Mock
+  private PriceStrategy priceStrategy;
+
   @Spy
   private PriceMapper priceMapper = Mappers.getMapper(PriceMapper.class);
 
@@ -70,10 +81,18 @@ class PriceServiceTest {
     when(pricePort.getPrices(currentDate, PRODUCT_ID, BRAND_ID))
         .thenReturn(List.of(lowPriority, highPriority));
 
+    when(priceStrategyFactory.resolve(List.of(lowPriority, highPriority)))
+        .thenReturn(priceStrategy);
+
+    when(priceStrategy.apply(List.of(lowPriority, highPriority)))
+        .thenReturn(PriceDto.builder().price(HIGH_PRICE).productId(HIGH_PRIORITY_ID).build());
+
     PriceDto result = priceService.getPrice(currentDate, PRODUCT_ID, BRAND_ID);
 
     assertNotNull(result);
-    verify(pricePort).getPrices(currentDate, PRODUCT_ID, BRAND_ID);
+    assertEquals(HIGH_PRICE, result.getPrice());
+    verify(priceStrategyFactory).resolve(List.of(lowPriority, highPriority));
+    verify(priceStrategy).apply(List.of(lowPriority, highPriority));
   }
 
   @Test
@@ -82,8 +101,11 @@ class PriceServiceTest {
     when(pricePort.getPrices(currentDate, PRODUCT_ID, BRAND_ID))
         .thenReturn(Collections.emptyList());
 
-    assertThrows(BusinessException.class, () -> priceService.getPrice(currentDate, PRODUCT_ID, BRAND_ID));
+    assertThrows(BusinessException.class,
+        () -> priceService.getPrice(currentDate, PRODUCT_ID, BRAND_ID));
     verify(pricePort).getPrices(currentDate, PRODUCT_ID, BRAND_ID);
+    verify(priceStrategyFactory, never()).resolve(any());
+    verify(priceStrategy, never()).apply(any());
   }
 
   @Test
@@ -98,9 +120,17 @@ class PriceServiceTest {
     when(pricePort.getPrices(currentDate, PRODUCT_ID, BRAND_ID))
         .thenReturn(List.of(singlePriceModel));
 
+    when(priceStrategyFactory.resolve(List.of(singlePriceModel)))
+        .thenReturn(priceStrategy);
+
+    when(priceStrategy.apply(List.of(singlePriceModel)))
+        .thenReturn(PriceDto.builder().price(SINGLE_PRICE).productId(SINGLE_PRICE_ID).build());
+
     PriceDto result = priceService.getPrice(currentDate, PRODUCT_ID, BRAND_ID);
 
     assertNotNull(result);
-    verify(pricePort).getPrices(currentDate, PRODUCT_ID, BRAND_ID);
+    assertEquals(SINGLE_PRICE, result.getPrice());
+    verify(priceStrategyFactory).resolve(List.of(singlePriceModel));
+    verify(priceStrategy).apply(List.of(singlePriceModel));
   }
 }
