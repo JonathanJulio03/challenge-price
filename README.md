@@ -14,7 +14,7 @@ Comercio electrónico de precios
 ## Repositorio y Documentación
 
 - **Repositorio GitHub**: [challenge-price](https://github.com/JonathanJulio03/challenge-price)
-- **Swagger UI (Documentación de API)**: [http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)
+- **Swagger UI (Documentación de API)**: [https://challenge-test.online/swagger-ui/index.html](https://challenge-test.online/swagger-ui/index.html)
 
 ---
 
@@ -25,6 +25,8 @@ Comercio electrónico de precios
     - [Despliegue con Docker](#despliegue-en-docker)
 - [Arquitectura y Diagramas](#arquitectura-y-diagramas)
     - [Arquitectura Hexagonal](#arquitectura-hexagonal)
+- [CI/CD](#cicd)
+  - [GitHub Actions](#github-actions)
 
 ---
 
@@ -66,3 +68,23 @@ Diagrama de Flujo
 Diagrama de Arquitectura
 
 <img src="doc/image/hexagonal_diagram.png" width="500"/>
+
+## CI/CD
+### GitHub Actions
+El CI/CD realiza las siguientes acciones:
+**Install**
+- sudo apt update && sudo apt upgrade -y
+- sudo apt install openjdk-23-jdk  -y
+- git clone https://github.com/JonathanJulio03/challenge-price.git challenge
+- sudo apt install certbot python3-certbot-nginx
+- sudo certbot --nginx
+- sudo apt update && sudo apt install docker.io docker-compose -y
+- chmod +x mvnw
+- docker-compose up --build -d
+
+**Logs**
+- docker logs -f spring-app
+
+**Config redirect**
+- sudo nano /etc/nginx/sites-available/default
+- sudo systemctl restart nginx
