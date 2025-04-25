@@ -2,14 +2,12 @@ package com.challenge.price.application.service;
 
 import com.challenge.price.application.input.PriceUseCase;
 import com.challenge.price.application.output.PricePort;
-import com.challenge.price.application.service.mapper.PriceMapper;
+import com.challenge.price.domain.strategy.PriceStrategyFactory;
 import com.challenge.price.commons.exception.BusinessException;
 import com.challenge.price.commons.exception.message.BusinessErrorMessage;
-import com.challenge.price.domain.PriceModel;
 import com.challenge.price.server.models.PriceDto;
 import java.time.LocalDateTime;
-import java.util.Comparator;
-import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,18 +17,14 @@ public class PriceService implements PriceUseCase {
 
   private final PricePort port;
 
-  private final PriceMapper mapper;
+  private final PriceStrategyFactory strategyFactory;
 
   @Override
   public PriceDto getPrice(LocalDateTime date, Long productId, Long brandId) {
-    List<PriceModel> priceModelApply = port.getPrices(date, productId, brandId);
-
-    if (priceModelApply.isEmpty()) {
-      throw new BusinessException(BusinessErrorMessage.PRICE_APPLY_NOT_FOUND);
-    }
-
-    return mapper.toDto(
-        priceModelApply.stream().max(Comparator.comparingInt(PriceModel::getPriority))
-            .orElseThrow(() -> new BusinessException(BusinessErrorMessage.PRICE_APPLY_ERROR)));
+    return Optional.ofNullable(port.getPrices(date, productId, brandId))
+        .filter(prices -> !prices.isEmpty())
+        .map(strategyFactory::resolve)
+        .map(strategy -> strategy.apply(port.getPrices(date, productId, brandId)))
+        .orElseThrow(() -> new BusinessException(BusinessErrorMessage.PRICE_APPLY_NOT_FOUND));
   }
 }

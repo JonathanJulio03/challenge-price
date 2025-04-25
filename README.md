@@ -16,6 +16,8 @@ Comercio electrónico de precios
 - **Repositorio GitHub**: [challenge-price](https://github.com/JonathanJulio03/challenge-price)
 - **Swagger UI (Documentación de API)**: [https://challenge-test.online/swagger-ui/index.html](https://challenge-test.online/swagger-ui/index.html)
 
+<img src="doc/image/swagger.png" width="800"/>
+
 ---
 
 ## Tabla de Contenido
@@ -27,6 +29,7 @@ Comercio electrónico de precios
     - [Arquitectura Hexagonal](#arquitectura-hexagonal)
 - [CI/CD](#cicd)
   - [GitHub Actions](#github-actions)
+- [Test Jmeter](#jmeter)
 
 ---
 
@@ -88,3 +91,7 @@ El CI/CD realiza las siguientes acciones:
 **Config redirect**
 - sudo nano /etc/nginx/sites-available/default
 - sudo systemctl restart nginx
+
+## Jmeter
+
+<img src="doc/image/jmeter.png" width="800"/>
