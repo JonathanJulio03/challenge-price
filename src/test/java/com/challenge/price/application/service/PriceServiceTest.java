@@ -11,7 +11,7 @@ import com.challenge.price.commons.exception.BusinessException;
 import com.challenge.price.domain.PriceModel;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Optional;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -51,7 +51,7 @@ class PriceServiceTest {
         .build();
 
     when(pricePort.getPrices(currentDate, PRODUCT_ID, BRAND_ID))
-        .thenReturn(Optional.of(singlePriceModel));
+        .thenReturn(List.of(singlePriceModel));
 
     PriceModel result = priceService.getPrice(currentDate, PRODUCT_ID, BRAND_ID);
 
@@ -63,7 +63,7 @@ class PriceServiceTest {
   @DisplayName("Should throw BusinessException when price list is empty")
   void shouldThrowBusinessExceptionWhenPriceListIsEmpty() {
     when(pricePort.getPrices(currentDate, PRODUCT_ID, BRAND_ID))
-        .thenReturn(Optional.empty());
+        .thenReturn(List.of());
 
     assertThrows(BusinessException.class,
         () -> priceService.getPrice(currentDate, PRODUCT_ID, BRAND_ID));

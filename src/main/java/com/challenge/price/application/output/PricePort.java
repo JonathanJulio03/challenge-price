@@ -2,8 +2,8 @@ package com.challenge.price.application.output;
 
 import com.challenge.price.domain.PriceModel;
 import java.time.LocalDateTime;
-import java.util.Optional;
+import java.util.List;
 
 public interface PricePort {
-  Optional<PriceModel> getPrices(LocalDateTime date, Long productId, Long brandId);
+  List<PriceModel> getPrices(LocalDateTime date, Long productId, Long brandId);
 }
