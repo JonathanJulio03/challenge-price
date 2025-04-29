@@ -8,11 +8,11 @@ import static org.mockito.Mockito.when;
 
 import com.challenge.price.commons.exception.TechnicalException;
 import com.challenge.price.domain.PriceModel;
+import com.challenge.price.infrastructure.output.adapter.db.entities.PriceData;
 import com.challenge.price.infrastructure.output.adapter.db.mapper.PriceDataMapper;
 import com.challenge.price.infrastructure.output.adapter.db.repository.PriceRepository;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -45,34 +45,33 @@ class PriceAdapterRepositoryTest {
   }
 
   @Test
-  @DisplayName("Test method return List Of Price Models When Repository Returns Data")
+  @DisplayName("Test method return Price Models When Repository Returns Data")
   void getPricesReturnsListOfPriceModelsWhenRepositoryReturnsData() {
     when(
-        repository.findByStartDateLessThanEqualAndEndDateGreaterThanEqualAndProductIdAndBrandDataId(
-            currentDate, currentDate, ID, ID)).thenReturn(new ArrayList<>());
+        repository.findTopByDateAndProductIdAndBrandId(
+            currentDate, ID, ID)).thenReturn(Optional.of(new PriceData()));
 
-    List<PriceModel> prices = priceAdapterRepository.getPrices(currentDate, ID, ID);
+    Optional<PriceModel> prices = priceAdapterRepository.getPrices(currentDate, ID, ID);
 
     assertNotNull(prices);
     verify(repository,
-        times(1)).findByStartDateLessThanEqualAndEndDateGreaterThanEqualAndProductIdAndBrandDataId(
-        currentDate, currentDate, ID, ID);
-    verify(mapper, times(0)).toDomain(any());
+        times(1)).findTopByDateAndProductIdAndBrandId(
+        currentDate, ID, ID);
   }
 
   @Test
   @DisplayName("Test method return Throws TechnicalException When Repository ThrowsException")
   void getPricesThrowsTechnicalExceptionWhenRepositoryThrowsException() {
     when(
-        repository.findByStartDateLessThanEqualAndEndDateGreaterThanEqualAndProductIdAndBrandDataId(
-            currentDate, currentDate, ID, ID)).thenThrow(new RuntimeException());
+        repository.findTopByDateAndProductIdAndBrandId(
+            currentDate, ID, ID)).thenThrow(new RuntimeException());
 
     assertThrows(TechnicalException.class, () ->
         priceAdapterRepository.getPrices(currentDate, ID, ID)
     );
     verify(repository,
-        times(1)).findByStartDateLessThanEqualAndEndDateGreaterThanEqualAndProductIdAndBrandDataId(
-        currentDate, currentDate, ID, ID);
+        times(1)).findTopByDateAndProductIdAndBrandId(
+        currentDate, ID, ID);
     verify(mapper, times(0)).toDomain(any());
   }
 }
