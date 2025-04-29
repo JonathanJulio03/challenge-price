@@ -3,30 +3,21 @@ package com.challenge.price.application.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.challenge.price.application.output.PricePort;
-import com.challenge.price.application.service.mapper.PriceMapper;
-import com.challenge.price.domain.strategy.PriceStrategy;
-import com.challenge.price.domain.strategy.PriceStrategyFactory;
 import com.challenge.price.commons.exception.BusinessException;
 import com.challenge.price.domain.PriceModel;
-import com.challenge.price.server.models.PriceDto;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mapstruct.factory.Mappers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
@@ -34,11 +25,7 @@ class PriceServiceTest {
 
   private static final long PRODUCT_ID = 1L;
   private static final long BRAND_ID = 1L;
-  private static final long LOW_PRIORITY_ID = 10L;
-  private static final long HIGH_PRIORITY_ID = 20L;
   private static final long SINGLE_PRICE_ID = 30L;
-  private static final BigDecimal LOW_PRICE = BigDecimal.valueOf(50.00);
-  private static final BigDecimal HIGH_PRICE = BigDecimal.valueOf(99.99);
   private static final BigDecimal SINGLE_PRICE = BigDecimal.valueOf(79.99);
 
   private LocalDateTime currentDate;
@@ -49,67 +36,13 @@ class PriceServiceTest {
   @Mock
   private PricePort pricePort;
 
-  @Mock
-  private PriceStrategyFactory priceStrategyFactory;
-
-  @Mock
-  private PriceStrategy priceStrategy;
-
-  @Spy
-  private PriceMapper priceMapper = Mappers.getMapper(PriceMapper.class);
-
   @BeforeEach
   void setUp() {
     currentDate = LocalDateTime.now();
   }
 
   @Test
-  @DisplayName("Should return PriceDto with highest priority when multiple prices exist")
-  void shouldReturnPriceDtoWithHighestPriority() {
-    PriceModel lowPriority = PriceModel.builder()
-        .id(LOW_PRIORITY_ID)
-        .price(LOW_PRICE)
-        .priority(1)
-        .build();
-
-    PriceModel highPriority = PriceModel.builder()
-        .id(HIGH_PRIORITY_ID)
-        .price(HIGH_PRICE)
-        .priority(5)
-        .build();
-
-    when(pricePort.getPrices(currentDate, PRODUCT_ID, BRAND_ID))
-        .thenReturn(List.of(lowPriority, highPriority));
-
-    when(priceStrategyFactory.resolve(List.of(lowPriority, highPriority)))
-        .thenReturn(priceStrategy);
-
-    when(priceStrategy.apply(List.of(lowPriority, highPriority)))
-        .thenReturn(PriceDto.builder().price(HIGH_PRICE).productId(HIGH_PRIORITY_ID).build());
-
-    PriceDto result = priceService.getPrice(currentDate, PRODUCT_ID, BRAND_ID);
-
-    assertNotNull(result);
-    assertEquals(HIGH_PRICE, result.getPrice());
-    verify(priceStrategyFactory).resolve(List.of(lowPriority, highPriority));
-    verify(priceStrategy).apply(List.of(lowPriority, highPriority));
-  }
-
-  @Test
-  @DisplayName("Should throw BusinessException when price list is empty")
-  void shouldThrowBusinessExceptionWhenPriceListIsEmpty() {
-    when(pricePort.getPrices(currentDate, PRODUCT_ID, BRAND_ID))
-        .thenReturn(Collections.emptyList());
-
-    assertThrows(BusinessException.class,
-        () -> priceService.getPrice(currentDate, PRODUCT_ID, BRAND_ID));
-    verify(pricePort).getPrices(currentDate, PRODUCT_ID, BRAND_ID);
-    verify(priceStrategyFactory, never()).resolve(any());
-    verify(priceStrategy, never()).apply(any());
-  }
-
-  @Test
-  @DisplayName("Should return PriceDto when only one price exists")
+  @DisplayName("Should return PriceModel when only one price exists")
   void shouldReturnPriceDtoWhenOnlyOnePriceExists() {
     PriceModel singlePriceModel = PriceModel.builder()
         .id(SINGLE_PRICE_ID)
@@ -120,17 +53,20 @@ class PriceServiceTest {
     when(pricePort.getPrices(currentDate, PRODUCT_ID, BRAND_ID))
         .thenReturn(List.of(singlePriceModel));
 
-    when(priceStrategyFactory.resolve(List.of(singlePriceModel)))
-        .thenReturn(priceStrategy);
-
-    when(priceStrategy.apply(List.of(singlePriceModel)))
-        .thenReturn(PriceDto.builder().price(SINGLE_PRICE).productId(SINGLE_PRICE_ID).build());
-
-    PriceDto result = priceService.getPrice(currentDate, PRODUCT_ID, BRAND_ID);
+    PriceModel result = priceService.getPrice(currentDate, PRODUCT_ID, BRAND_ID);
 
     assertNotNull(result);
     assertEquals(SINGLE_PRICE, result.getPrice());
-    verify(priceStrategyFactory).resolve(List.of(singlePriceModel));
-    verify(priceStrategy).apply(List.of(singlePriceModel));
+  }
+
+  @Test
+  @DisplayName("Should throw BusinessException when price list is empty")
+  void shouldThrowBusinessExceptionWhenPriceListIsEmpty() {
+    when(pricePort.getPrices(currentDate, PRODUCT_ID, BRAND_ID))
+        .thenReturn(List.of());
+
+    assertThrows(BusinessException.class,
+        () -> priceService.getPrice(currentDate, PRODUCT_ID, BRAND_ID));
+    verify(pricePort).getPrices(currentDate, PRODUCT_ID, BRAND_ID);
   }
 }

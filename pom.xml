@@ -34,7 +34,6 @@
 			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
 			<version>2.8.6</version>
 		</dependency>
-
 		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
@@ -102,58 +101,6 @@
 					</excludes>
 				</configuration>
 			</plugin>
-			<plugin>
-				<groupId>org.openapitools</groupId>
-				<artifactId>openapi-generator-maven-plugin</artifactId>
-				<version>7.12.0</version>
-				<executions>
-					<execution>
-						<id>generate-openapi</id>
-						<goals>
-							<goal>generate</goal>
-						</goals>
-						<phase>generate-sources</phase>
-						<configuration>
-							<generatorName>spring</generatorName>
-							<inputSpec>${basedir}/src/main/resources/openapi.yaml</inputSpec>
-							<apiPackage>com.challenge.price.server</apiPackage>
-							<modelPackage>com.challenge.price.server.models</modelPackage>
-							<library>spring-boot</library>
-							<output>${project.build.directory}/generated-sources/openapi</output>
-							<templateDirectory>${basedir}/openapi-templates/spring</templateDirectory>
-							<typeMappings>
-								<typeMapping>number=BigDecimal</typeMapping>
-								<typeMapping>float=BigDecimal</typeMapping>
-								<typeMapping>OffsetDateTime=LocalDateTime</typeMapping>
-							</typeMappings>
-							<importMappings>
-								<importMapping>BigDecimal=java.math.BigDecimal</importMapping>
-								<importMapping>LocalDateTime=java.time.LocalDateTime</importMapping>
-							</importMappings>
-							<configOptions>
-								<useSpringBoot3>true</useSpringBoot3>
-								<useJakartaEe>true</useJakartaEe>
-								<serializableModel>true</serializableModel>
-								<dateLibrary>java8</dateLibrary>
-								<openApiNullable>false</openApiNullable>
-								<delegatePattern>true</delegatePattern>
-								<apiFirst>false</apiFirst>
-								<interfaceOnly>true</interfaceOnly>
-								<disallowAdditionalPropertiesIfNotPresent>true</disallowAdditionalPropertiesIfNotPresent>
-								<basePackage>com.challenge.price</basePackage>
-								<sourceFolder>src/main/java</sourceFolder>
-								<additionalModelTypeAnnotations>@lombok.Data @lombok.Builder @lombok.NoArgsConstructor @lombok.AllArgsConstructor @lombok.EqualsAndHashCode @lombok.ToString @lombok.experimental.FieldDefaults(level = lombok.AccessLevel.PRIVATE) @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)</additionalModelTypeAnnotations>
-							</configOptions>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
 		</plugins>
 	</build>
-	<pluginRepositories>
-		<pluginRepository>
-			<id>openapi-generator</id>
-			<url>https://repo1.maven.org/maven2/</url>
-		</pluginRepository>
-	</pluginRepositories>
 </project>
