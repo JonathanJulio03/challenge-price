@@ -6,7 +6,8 @@ import com.challenge.price.commons.exception.BusinessException;
 import com.challenge.price.commons.exception.message.BusinessErrorMessage;
 import com.challenge.price.domain.PriceModel;
 import java.time.LocalDateTime;
-import java.util.Optional;
+import java.util.Comparator;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,8 +19,13 @@ public class PriceService implements PriceUseCase {
 
   @Override
   public PriceModel getPrice(LocalDateTime date, Long productId, Long brandId) {
-    return Optional.ofNullable(port.getPrices(date, productId, brandId))
-        .flatMap(prices -> prices)
-        .orElseThrow(() -> new BusinessException(BusinessErrorMessage.PRICE_APPLY_NOT_FOUND));
+    List<PriceModel> priceModelApply = port.getPrices(date, productId, brandId);
+
+    if (priceModelApply.isEmpty()) {
+      throw new BusinessException(BusinessErrorMessage.PRICE_APPLY_NOT_FOUND);
+    }
+
+    return priceModelApply.stream().max(Comparator.comparingInt(PriceModel::getPriority))
+        .orElseThrow(() -> new BusinessException(BusinessErrorMessage.PRICE_APPLY_ERROR));
   }
 }

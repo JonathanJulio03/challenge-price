@@ -8,7 +8,8 @@ import org.springframework.http.HttpStatus;
 @RequiredArgsConstructor
 public enum BusinessErrorMessage {
   PRICE_APPLY_NOT_FOUND("PAB000001", "Precio a aplicar no encontrado", HttpStatus.NOT_FOUND),
-  REQUEST_ERROR("PAB000002", "Request erroneo", HttpStatus.BAD_REQUEST);
+  REQUEST_ERROR("PAB000002", "Request erroneo", HttpStatus.BAD_REQUEST),
+  PRICE_APPLY_ERROR("PRB000003", "Precio a aplicar erroneo", HttpStatus.BAD_REQUEST);
 
   private final String code;
   private final String message;
