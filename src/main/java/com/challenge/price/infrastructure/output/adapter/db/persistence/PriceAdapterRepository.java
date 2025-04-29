@@ -22,8 +22,10 @@ public class PriceAdapterRepository implements PricePort {
   @Override
   public List<PriceModel> getPrices(LocalDateTime date, Long productId, Long brandId) {
     try {
-      return repository.findByStartDateLessThanEqualAndEndDateGreaterThanEqualAndProductIdAndBrandDataId(
-          date, date, productId, brandId).stream().map(mapper::toDomain).toList();
+      return repository.findTopByDateAndProductIdAndBrandId(date, productId, brandId)
+          .stream()
+          .map(mapper::toDomain)
+          .toList();
     } catch (Exception e) {
       throw new TechnicalException(e, TechnicalErrorMessage.PRICE_APPLY_EXCEPTION);
     }

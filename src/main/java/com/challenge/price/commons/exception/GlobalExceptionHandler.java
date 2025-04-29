@@ -2,7 +2,7 @@ package com.challenge.price.commons.exception;
 
 import com.challenge.price.commons.exception.message.BusinessErrorMessage;
 import com.challenge.price.commons.exception.message.TechnicalErrorMessage;
-import com.challenge.price.server.models.ErrorResponse;
+import com.challenge.price.domain.ErrorResponse;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

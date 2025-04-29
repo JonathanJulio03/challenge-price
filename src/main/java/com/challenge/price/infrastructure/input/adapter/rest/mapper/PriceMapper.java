@@ -1,7 +1,7 @@
-package com.challenge.price.application.service.mapper;
+package com.challenge.price.infrastructure.input.adapter.rest.mapper;
 
 import com.challenge.price.domain.PriceModel;
-import com.challenge.price.server.models.PriceDto;
+import com.challenge.price.infrastructure.input.adapter.rest.command.response.PriceDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
 

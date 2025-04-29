@@ -9,5 +9,4 @@ springdoc:
     path: /api
   swagger-ui:
     path: /swagger-ui.html
-    url: https://challenge-test.online/api-docs
   paths-to-exclude: /swagger-resources/**

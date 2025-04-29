@@ -3,7 +3,7 @@ package com.challenge.price.infrastructure.input.adapter.rest.resources;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import com.challenge.price.server.models.PriceDto;
+import com.challenge.price.infrastructure.input.adapter.rest.command.response.PriceDto;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.DisplayName;
