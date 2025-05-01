@@ -2,11 +2,8 @@ package com.challenge.price.application.service;
 
 import com.challenge.price.application.input.PriceUseCase;
 import com.challenge.price.application.output.PricePort;
-import com.challenge.price.commons.exception.BusinessException;
-import com.challenge.price.commons.exception.message.BusinessErrorMessage;
 import com.challenge.price.domain.PriceModel;
 import java.time.LocalDateTime;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,12 +15,6 @@ public class PriceService implements PriceUseCase {
 
   @Override
   public PriceModel getPrice(LocalDateTime date, Long productId, Long brandId) {
-    List<PriceModel> priceModelApply = port.getPrices(date, productId, brandId);
-
-    if (priceModelApply.isEmpty()) {
-      throw new BusinessException(BusinessErrorMessage.PRICE_APPLY_NOT_FOUND);
-    }
-
-    return priceModelApply.getFirst();
+    return port.getPrice(date, productId, brandId);
   }
 }

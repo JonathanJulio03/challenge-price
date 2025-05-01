@@ -1,18 +1,20 @@
 package com.challenge.price.infrastructure.output.adapter.db.persistence;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.challenge.price.commons.exception.TechnicalException;
+import com.challenge.price.commons.exception.message.TechnicalErrorMessage;
 import com.challenge.price.domain.PriceModel;
 import com.challenge.price.infrastructure.output.adapter.db.entities.PriceData;
 import com.challenge.price.infrastructure.output.adapter.db.mapper.PriceDataMapper;
 import com.challenge.price.infrastructure.output.adapter.db.repository.PriceRepository;
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -49,9 +51,9 @@ class PriceAdapterRepositoryTest {
   void getPricesReturnsListOfPriceModelsWhenRepositoryReturnsData() {
     when(
         repository.findTopByDateAndProductIdAndBrandId(
-            currentDate, ID, ID)).thenReturn(List.of(new PriceData()));
+            currentDate, ID, ID)).thenReturn(Optional.of(new PriceData()));
 
-    List<PriceModel> prices = priceAdapterRepository.getPrices(currentDate, ID, ID);
+    PriceModel prices = priceAdapterRepository.getPrice(currentDate, ID, ID);
 
     assertNotNull(prices);
     verify(repository,
@@ -64,10 +66,11 @@ class PriceAdapterRepositoryTest {
   void getPricesThrowsTechnicalExceptionWhenRepositoryThrowsException() {
     when(
         repository.findTopByDateAndProductIdAndBrandId(
-            currentDate, ID, ID)).thenThrow(new RuntimeException());
+            currentDate, ID, ID)).thenThrow(
+        new TechnicalException(TechnicalErrorMessage.PRICE_APPLY_NOT_FOUND));
 
     assertThrows(TechnicalException.class, () ->
-        priceAdapterRepository.getPrices(currentDate, ID, ID)
+        priceAdapterRepository.getPrice(currentDate, ID, ID)
     );
     verify(repository,
         times(1)).findTopByDateAndProductIdAndBrandId(

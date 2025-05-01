@@ -38,6 +38,7 @@ Comercio electrónico de precios
 ### Despliegue Local
 
 1. Configura el archivo `application.yml` y las variables de entorno desde `.env`.
+   - DB_NAME=ecommerce;DB_PASSWORD=root;DB_USER=root;ENVIRONMENT=dev
 2. Ejecuta los siguientes comandos:
 ```cmd
 mvn clean install
