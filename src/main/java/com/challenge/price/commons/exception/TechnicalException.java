@@ -12,9 +12,4 @@ import lombok.experimental.FieldDefaults;
 public class TechnicalException extends RuntimeException {
 
   final TechnicalErrorMessage technicalErrorMessage;
-
-  public TechnicalException(Throwable cause, TechnicalErrorMessage technicalErrorMessage) {
-    super(cause);
-    this.technicalErrorMessage = technicalErrorMessage;
-  }
 }

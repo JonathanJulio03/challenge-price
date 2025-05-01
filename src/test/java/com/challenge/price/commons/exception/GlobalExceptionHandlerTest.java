@@ -1,8 +1,8 @@
 package com.challenge.price.commons.exception;
 
+import static com.challenge.price.commons.helper.Constants.REQUEST_ERROR;
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.challenge.price.commons.exception.message.BusinessErrorMessage;
 import com.challenge.price.commons.exception.message.TechnicalErrorMessage;
 import com.challenge.price.domain.ErrorResponse;
 import java.util.Objects;
@@ -21,19 +21,6 @@ class GlobalExceptionHandlerTest {
 
   @InjectMocks
   private GlobalExceptionHandler exceptionHandler;
-
-  @Test
-  @DisplayName("Test method handle business exception")
-  void shouldHandleBusinessException() {
-    BusinessException exception = new BusinessException(BusinessErrorMessage.PRICE_APPLY_NOT_FOUND);
-    ResponseEntity<ErrorResponse> responseEntity = exceptionHandler.handleExceptions(exception);
-
-    assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
-    assertEquals(BusinessErrorMessage.PRICE_APPLY_NOT_FOUND.getCode(), Objects.requireNonNull(
-        responseEntity.getBody()).getCode());
-    assertEquals(BusinessErrorMessage.PRICE_APPLY_NOT_FOUND.getMessage(), Objects.requireNonNull(
-        responseEntity.getBody()).getMessage());
-  }
 
   @Test
   @DisplayName("Test method handle technical exception")
@@ -78,7 +65,7 @@ class GlobalExceptionHandlerTest {
         exception);
 
     assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
-    assertEquals(BusinessErrorMessage.REQUEST_ERROR.getCode(), Objects.requireNonNull(
+    assertEquals(REQUEST_ERROR, Objects.requireNonNull(
         responseEntity.getBody()).getCode());
   }
 }

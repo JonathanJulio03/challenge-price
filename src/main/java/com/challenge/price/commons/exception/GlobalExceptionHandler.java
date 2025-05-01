@@ -1,6 +1,7 @@
 package com.challenge.price.commons.exception;
 
-import com.challenge.price.commons.exception.message.BusinessErrorMessage;
+import static com.challenge.price.commons.helper.Constants.REQUEST_ERROR;
+
 import com.challenge.price.commons.exception.message.TechnicalErrorMessage;
 import com.challenge.price.domain.ErrorResponse;
 import lombok.extern.log4j.Log4j2;
@@ -15,13 +16,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @Log4j2
 @ControllerAdvice
 public class GlobalExceptionHandler {
-
-  @ExceptionHandler(BusinessException.class)
-  public ResponseEntity<ErrorResponse> handleExceptions(BusinessException ex) {
-    log.error(ex);
-    return new ResponseEntity<>(getErrorResponses(ex),
-        ex.getBusinessErrorMessage().getHttpStatus());
-  }
 
   @ExceptionHandler(TechnicalException.class)
   @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -43,17 +37,10 @@ public class GlobalExceptionHandler {
       MissingServletRequestParameterException ex) {
     log.error(ex);
     ErrorResponse errorResponse = ErrorResponse.builder()
-        .code(BusinessErrorMessage.REQUEST_ERROR.getCode())
+        .code(REQUEST_ERROR)
         .message(ex.getMessage())
         .build();
     return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
-  }
-
-  private static ErrorResponse getErrorResponses(BusinessException businessException) {
-    return ErrorResponse.builder()
-        .code(businessException.getBusinessErrorMessage().getCode())
-        .message(businessException.getBusinessErrorMessage().getMessage())
-        .build();
   }
 
   private static ErrorResponse getErrorResponses(TechnicalException technicalException) {
