@@ -7,7 +7,6 @@ import com.challenge.price.domain.PriceModel;
 import com.challenge.price.infrastructure.output.adapter.db.mapper.PriceDataMapper;
 import com.challenge.price.infrastructure.output.adapter.db.repository.PriceRepository;
 import java.time.LocalDateTime;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -16,18 +15,12 @@ import org.springframework.stereotype.Component;
 public class PriceAdapterRepository implements PricePort {
 
   private final PriceRepository repository;
-
   private final PriceDataMapper mapper;
 
   @Override
-  public List<PriceModel> getPrices(LocalDateTime date, Long productId, Long brandId) {
-    try {
-      return repository.findTopByDateAndProductIdAndBrandId(date, productId, brandId)
-          .stream()
-          .map(mapper::toDomain)
-          .toList();
-    } catch (Exception e) {
-      throw new TechnicalException(e, TechnicalErrorMessage.PRICE_APPLY_EXCEPTION);
-    }
+  public PriceModel getPrice(LocalDateTime date, Long productId, Long brandId) {
+    return repository.findTopByDateAndProductIdAndBrandId(date, productId, brandId)
+        .map(mapper::toDomain)
+        .orElseThrow(() -> new TechnicalException(TechnicalErrorMessage.PRICE_APPLY_NOT_FOUND));
   }
 }
